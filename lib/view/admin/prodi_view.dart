@@ -48,6 +48,17 @@ class _ProdiViewState extends State<ProdiView> {
     });
   }
 
+  Future<void> updateProdi(int id, String name, int fakultasId) async {
+    final Map<String, dynamic> prodiData = {
+      'name': name,
+      'fakultas_id': fakultasId,
+    };
+    await serviceApi.updateProdi(id, prodiData);
+    setState(() {
+      futureProdiList = fetchProdiList();
+    });
+  }
+
   Future<void> deleteProdi(int id) async {
     await serviceApi.deleteProdi(id);
     setState(() {
@@ -135,6 +146,8 @@ class _ProdiViewState extends State<ProdiView> {
                     if (name.isNotEmpty && selectedFakultasId != null) {
                       if (prodi == null) {
                         await addProdi(name, selectedFakultasId!);
+                      } else {
+                        await updateProdi(prodi.id, name, selectedFakultasId!);
                       }
                       Navigator.of(context).pop();
                     } else {

@@ -6,9 +6,9 @@ class Mahasiswa {
   final String noTelp;
   final String email;
   final String alamat;
-  final int fakultasId;
-  final int prodiId;
-  final String status;
+  final int fakultasId; // Fakultas ID
+  final int prodiId; // Prodi ID
+  final String status; // Status mahasiswa
 
   Mahasiswa({
     required this.id,
@@ -23,23 +23,24 @@ class Mahasiswa {
     required this.status,
   });
 
-  // Factory untuk membuat objek dari Map
   factory Mahasiswa.fromMap(Map<String, dynamic> map) {
+    T? getListValue<T>(dynamic list) =>
+        list is List && list.isNotEmpty ? list[0] : null;
+
     return Mahasiswa(
-      id: 1,
-      name: "Ahmad Fauzi",
-      nim: "12345678",
-      tahunLulus: "2022",
-      noTelp: "081234567890",
-      email: "ahmad.fauzi@example.com",
-      alamat: "Jl. Raya Malang No. 1",
-      fakultasId: 1,
-      prodiId: 101,
-      status: "Bekerja (full time)",
+      id: map['id'] ?? 0,
+      name: map['name'] ?? '',
+      nim: map['nim'] ?? '',
+      tahunLulus: map['tahun_lulus']?.toString() ?? '',
+      noTelp: map['nomor_telepon'] ?? '',
+      email: map['email'] ?? '',
+      alamat: map['alamat_rumah'] ?? '',
+      fakultasId: getListValue<int>(map['fakultas_id']) ?? 0,
+      prodiId: getListValue<int>(map['prodi_id']) ?? 0,
+      status: map['status'] ?? '',
     );
   }
 
-  // Convert object to Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,

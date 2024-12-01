@@ -82,12 +82,12 @@ class _MhsViewState extends State<MhsView> {
         String? selectedStatus = mahasiswa?['status'];
 
         // Tambahkan deklarasi statusOptions di sini
-        final List<String> statusOptions = [
-          'Bekerja (full time/part time)',
-          'Wiraswasta',
-          'Melanjutkan Pendidikan',
-          'Tidak kerja tetapi sedang mencari kerja',
-        ];
+        final Map<String, String> statusOptions = {
+          'Bekerja (full time/part time)': 'bekerja',
+          'Wiraswasta': 'wiraswasta',
+          'Melanjutkan Pendidikan': 'melanjutkan_pendidikan',
+          'Tidak kerja tetapi sedang mencari kerja': 'tidak_bekerja',
+        };
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -220,10 +220,11 @@ class _MhsViewState extends State<MhsView> {
                           'Status',
                           style: TextStyle(fontSize: 16, color: Colors.grey),
                         ),
-                        ...statusOptions.map((status) {
+                        ...statusOptions.entries.map((entry) {
                           return RadioListTile<String>(
-                            title: Text(status, style: TextStyle(fontSize: 16)),
-                            value: status,
+                            title:
+                                Text(entry.key, style: TextStyle(fontSize: 16)),
+                            value: entry.value, // Use the internal value here
                             groupValue: selectedStatus,
                             onChanged: (String? newValue) {
                               setState(() {

@@ -142,20 +142,22 @@ class ServiceApi {
   }
 
   final Map<String, String> statusMapping = {
-    'Bekerja (full time/part time)': 'bekerja',
-    'Wiraswasta': 'wiraswasta',
-    'Melanjutkan Pendidikan': 'lanjut_pendidikan',
-    'Tidak kerja tetapi sedang mencari kerja': 'belum_bekerja',
+    'bekerja': 'Bekerja (full time/part time)',
+    'wiraswasta': 'Wiraswasta',
+    'melanjutkan_pendidikan': 'Melanjutkan Pendidikan',
+    'tidak_bekerja': 'Tidak kerja tetapi sedang mencari kerja',
   };
 
-  Future<void> addMahasiswa(Map<String, dynamic> mahasiswaData) async {
+  Future<void> addMahasiswa(Map<String, dynamic> data) async {
     try {
       await auth();
-      print('Sending data: $mahasiswaData');
+      print('Original data: $data');
+
+      print('Sending data: $data');
       await orpc.callKw({
         'model': 'tracer_alumni.pengguna',
         'method': 'create',
-        'args': [mahasiswaData],
+        'args': [data],
         'kwargs': {},
       });
       print('Mahasiswa added successfully');
@@ -165,16 +167,45 @@ class ServiceApi {
   }
 
   Future<void> updateMahasiswa(int id, Map<String, dynamic> data) async {
-    await auth();
-    await orpc.callKw({
-      'model': 'tracer_alumni.pengguna',
-      'method': 'write',
-      'args': [
-        [id],
-        data,
-      ],
-      'kwargs': {},
-    });
+    try {
+      await auth();
+      print('Authenticating for updateMahasiswa...');
+
+      // Periksa apakah record dengan ID yang dimaksud ada
+      final existing = await orpc.callKw({
+        'model': 'tracer_alumni.pengguna',
+        'method': 'search',
+        'args': [
+          [
+            ['id', '=', id]
+          ]
+        ],
+        'kwargs': {},
+      });
+
+      if (existing.isEmpty) {
+        print('No record found with ID: $id');
+        return;
+      }
+
+      print('Found record with ID: $id. Proceeding with update...');
+      print('Data to update: $data');
+      print('Type of data: ${data.runtimeType}');
+
+      // Perbarui record
+      await orpc.callKw({
+        'model': 'tracer_alumni.pengguna',
+        'method': 'write',
+        'args': [
+          [id],
+          data,
+        ],
+        'kwargs': {},
+      });
+      print('Mahasiswa updated successfully');
+    } catch (e) {
+      print('Error updating Mahasiswa: $e');
+    }
   }
 
   Future<void> deleteMahasiswa(int id) async {
